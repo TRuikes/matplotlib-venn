@@ -210,8 +210,21 @@ def compute_venn3_colors(set_colors):
     >>> str(compute_venn3_colors(['r', 'g', 'b'])).replace(' ', '')
     '(array([1.,0.,0.]),...,array([0.4,0.2,0.4]))'
     '''
-    ccv = ColorConverter()
-    base_colors = [np.array(ccv.to_rgb(c)) for c in set_colors]
+
+    # colors should be either all single letters or all rgb
+    col_len = np.zeros(len(set_colors))
+    for ci, c in enumerate(set_colors):
+        col_len[ci] = len(c)
+
+    assert np.unique(col_len).shape[0] == 1  # only one type of col allowed
+    assert col_len[0] in [1, 7]  # provide either single digit or a hex
+
+    if col_len[0] == 1:
+        ccv = ColorConverter()
+        base_colors = [np.array(ccv.to_rgb(c)) for c in set_colors]
+    else:
+        base_colors = [np.array(c) for c in set_colors]
+
     return (base_colors[0], base_colors[1], mix_colors(base_colors[0], base_colors[1]), base_colors[2],
             mix_colors(base_colors[0], base_colors[2]), mix_colors(base_colors[1], base_colors[2]), mix_colors(base_colors[0], base_colors[1], base_colors[2]))
 
